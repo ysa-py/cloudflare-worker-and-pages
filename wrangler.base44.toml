@@ -1,0 +1,19 @@
+# Sandbox-only Wrangler config used by docker-compose.base44.yml.
+# Mirrors wrangler.toml and adds a LOCAL D1 binding so the user panel
+# (/<uuid>) and the key_value cache work during local development.
+# Tables are created automatically on the first request (ensureTablesExist).
+name = "spring"
+main = "index.js"
+compatibility_date = "2025-11-09"
+workers_dev = true
+send_metrics = false
+minify = false
+
+[vars]
+UUID = "d342d11e-d424-4583-b36e-524ab1f0afa4"
+PROXYIP = "nima.nscl.ir"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "edgetunnel"
+database_id = "base44-local"

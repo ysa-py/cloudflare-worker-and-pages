@@ -1,0 +1,35 @@
+# Base44 dev environment for this Cloudflare Worker (edgetunnel).
+# Runs the worker from the bind-mounted source with `wrangler dev` (workerd),
+# so edits to index.js are picked up by the dev server without rebuilding.
+services:
+  worker:
+    image: node:22-slim
+    working_dir: /app
+    restart: on-failure
+    ports:
+      - "3000:3000"
+    environment:
+      - CI=true
+      - BASE44_PREVIEW_MODE
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+    command:
+      - sh
+      - -ec
+      - |
+        npm install --no-audit --no-fund
+        exec npx wrangler dev --config wrangler.base44.toml --ip 0.0.0.0 --port 3000 --persist-to /tmp/wrangler-state
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+
+volumes:
+  node_modules:
