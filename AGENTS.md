@@ -42,4 +42,8 @@ docker compose -f docker-compose.base44.yml up -d --build
   compatibility dates up to 2025-07-18, so the requested `2025-11-09` falls back with a warning. Harmless
   here; bump to `wrangler@4` to silence it.
 - There is no WebSocket/VLESS data-plane handler in `index.js`; only the HTTP surface runs locally.
+- `POST /api/qr-generate` fails server-side in a Worker (`document is not defined` → Google Charts fallback →
+  relative self-fetch `Invalid URL: /api/qr-generate`). Pre-existing app bug: `QRIntelligence` mixes
+  browser-only canvas code with the Worker route. The user panel generates QRs client-side, so the UI does
+  not depend on this endpoint; calling it just logs those warnings.
 - No test suite in the repo.
